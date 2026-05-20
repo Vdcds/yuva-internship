@@ -1,9 +1,9 @@
 import { Navbar } from "@/components/navbar";
 import { AuthCtaButtons } from "@/components/auth-cta-buttons";
-import { 
-  FileText, 
-  Calendar, 
-  CheckCircle, 
+import {
+  FileText,
+  Calendar,
+  CheckCircle,
   Building2,
   ArrowRight,
   Star,
@@ -42,20 +42,20 @@ const stats = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
+    <div className="min-h-screen bg-linear-to-b from-background via-background to-primary/5">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
-        
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+
         <div className="mx-auto max-w-7xl px-6 pt-20 pb-32 lg:px-8">
           <div className="relative text-center">
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm text-primary mb-8">
               <Star className="h-4 w-4" />
               <span>Trusted by thousands of citizens</span>
             </div>
-            
+
             <h1 className="font-didot text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
               <span className="text-foreground">E-</span>
               <span className="text-primary">Governance</span>
@@ -64,16 +64,16 @@ export default function HomePage() {
                 Simplifying Government Services for Everyone
               </span>
             </h1>
-            
+
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground mb-10 leading-relaxed">
-              Access government services from anywhere, anytime. Submit requests, 
+              Access government services from anywhere, anytime. Submit requests,
               book appointments, and track your applications with ease.
             </p>
-            
+
             <AuthCtaButtons />
           </div>
         </div>
-        
+
         {/* Stats */}
         <div className="border-y bg-card/50 backdrop-blur">
           <div className="mx-auto max-w-7xl px-6 py-8">
@@ -97,16 +97,16 @@ export default function HomePage() {
               Everything You Need
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Streamlined services designed to make your interaction with government 
+              Streamlined services designed to make your interaction with government
               simple, fast, and hassle-free.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature) => {
               const Icon = feature.icon
               return (
-                <div 
+                <div
                   key={feature.title}
                   className="group p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
                 >
@@ -135,7 +135,7 @@ export default function HomePage() {
               Get things done in three simple steps
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { step: "01", title: "Sign In", description: "Create your account or sign in to access the portal" },
@@ -165,14 +165,14 @@ export default function HomePage() {
       <section className="py-24 px-6">
         <div className="mx-auto max-w-4xl text-center">
           <div className="rounded-3xl bg-primary p-12 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80" />
+            <div className="absolute inset-0 bg-linear-to-r from-primary to-primary/80" />
             <div className="relative">
               <Building2 className="h-16 w-16 mx-auto text-primary-foreground/20 mb-6" />
               <h2 className="font-didot text-3xl sm:text-4xl font-bold text-primary-foreground mb-4">
                 Ready to Get Started?
               </h2>
 <p className="text-primary-foreground/80 mb-8 max-w-lg mx-auto">
-              Join thousands of citizens who are already enjoying seamless 
+              Join thousands of citizens who are already enjoying seamless
               government services online.
             </p>
             <div className="flex justify-center">

@@ -1,13 +1,13 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
-  '/', 
-  '/sign-in', 
-  '/sign-up', 
+  '/',
+  '/sign-in',
+  '/sign-up',
   '/mock-login',
   '/api/webhooks/clerk',
-  '/api/appointments',
-  '/api/requests'
+  '/api/chat',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -19,13 +19,15 @@ export default clerkMiddleware(async (auth, req) => {
   // Check for mock auth cookie
   const cookies = req.headers.get('cookie') || '';
   if (cookies.includes('mock_auth')) {
-    return; // Allow mock users
+    return;
   }
   
   // Check Clerk auth for real users
   const authResult = await auth();
   if (!authResult.userId) {
-    return new Response('Unauthorized', { status: 401 });
+    const signInUrl = new URL('/sign-in', req.url);
+    signInUrl.searchParams.set('redirect_url', req.url);
+    return NextResponse.redirect(signInUrl);
   }
 });
 
