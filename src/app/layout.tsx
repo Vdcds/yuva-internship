@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from '@/components/theme-provider'
 import { ToasterProvider } from '@/components/toaster'
 import { ClerkProviderWrapper } from '@/components/clerk-provider'
+import { ChatBot } from '@/components/chatbot'
 
 const gfsDidot = GFS_Didot({
   weight: "400",
@@ -28,6 +29,7 @@ export default function RootLayout({
         <body className="min-h-screen antialiased" suppressHydrationWarning>
           <ThemeProvider>
             {children}
+            <ChatBot />
             <ToasterProvider />
           </ThemeProvider>
         </body>
