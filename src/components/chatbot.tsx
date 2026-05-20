@@ -86,7 +86,7 @@ export function ChatBot() {
               </div>
               <div>
                 <p className="text-sm font-semibold">E-Gov Assistant</p>
-                <p className="text-xs text-muted-foreground">Powered by Gemini AI</p>
+                <p className="text-xs text-muted-foreground">Powered by Groq AI</p>
               </div>
             </div>
             <Button variant="ghost" size="icon-sm" onClick={() => setIsOpen(false)}>

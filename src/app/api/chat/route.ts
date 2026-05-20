@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import Groq from 'groq-sdk'
 
 const SYSTEM_PROMPT = `You are an AI assistant for an E-Governance Portal. Your role is to help citizens navigate government services in India. You are knowledgeable, helpful, and courteous.
 
@@ -23,7 +23,7 @@ Guidelines:
 
 export async function POST(request: Request) {
   try {
-    const apiKey = process.env.GEMINI_API_KEY
+    const apiKey = process.env.GROQ_API_KEY
     if (!apiKey) {
       return NextResponse.json({ error: 'AI service not configured' }, { status: 500 })
     }
@@ -34,23 +34,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Messages are required' }, { status: 400 })
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    const groq = new Groq({ apiKey })
 
-    const chat = model.startChat({
-      history: [
-        { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
-        { role: 'model', parts: [{ text: 'Understood. I am an AI assistant for the E-Governance Portal. I will help citizens with government services, portal navigation, and process guidance. How can I help you today?' }] },
-        ...messages.slice(0, -1).map((m: { role: string; content: string }) => ({
-          role: m.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: m.content }],
+    const completion = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...messages.map((m: { role: string; content: string }) => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
         })),
       ],
+      temperature: 0.7,
+      max_tokens: 1024,
     })
 
-    const lastMessage = messages[messages.length - 1]?.content || ''
-    const result = await chat.sendMessage(lastMessage)
-    const response = result.response.text()
+    const response = completion.choices[0]?.message?.content || 'Sorry, I could not generate a response.'
 
     return NextResponse.json({ message: response })
   } catch (error) {
