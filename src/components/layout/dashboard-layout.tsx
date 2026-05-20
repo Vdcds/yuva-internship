@@ -2,11 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Calendar, 
-  Settings, 
+import {
+  LayoutDashboard,
+  FileText,
+  Calendar,
   Users,
   Menu,
   X,
@@ -53,12 +52,12 @@ export function DashboardLayout({ children, userRole }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen flex">
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
-      
+
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-50 w-64 bg-background border-r transform transition-transform duration-200
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -66,20 +65,20 @@ export function DashboardLayout({ children, userRole }: DashboardLayoutProps) {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between p-4 border-b">
             <h1 className="font-didot text-lg font-bold">E-Governance</h1>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="lg:hidden"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
-          
+
           <nav className="flex-1 p-3 space-y-1">
             {links.map((link) => {
               const Icon = link.icon
-              const isActive = pathname === link.href || 
+              const isActive = pathname === link.href ||
                 (link.href !== '/dashboard' && pathname.startsWith(link.href))
               return (
                 <Link
@@ -87,8 +86,8 @@ export function DashboardLayout({ children, userRole }: DashboardLayoutProps) {
                   href={link.href}
                   className={`
                     flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
-                    ${isActive 
-                      ? 'bg-primary text-primary-foreground' 
+                    ${isActive
+                      ? 'bg-primary text-primary-foreground'
                       : 'hover:bg-muted'
                     }
                   `}
@@ -102,8 +101,8 @@ export function DashboardLayout({ children, userRole }: DashboardLayoutProps) {
           </nav>
 
           <div className="p-3 border-t">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full justify-start gap-2 text-sm"
               onClick={handleLogout}
             >
@@ -117,15 +116,15 @@ export function DashboardLayout({ children, userRole }: DashboardLayoutProps) {
       <div className="flex-1 flex flex-col">
         <header className="lg:hidden flex items-center justify-between p-3 border-b bg-background">
           <h1 className="text-base font-semibold">E-Governance</h1>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="h-4 w-4" />
           </Button>
         </header>
-        
+
         <main className="flex-1 p-4 bg-muted/10">
           {children}
         </main>

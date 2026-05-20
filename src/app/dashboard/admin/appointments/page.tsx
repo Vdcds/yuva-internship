@@ -16,10 +16,11 @@ const getCachedAllAppointments = unstable_cache(
       where,
       include: { user: true },
       orderBy: { date: 'asc' },
+      take: 100, // Add limit to prevent loading too many records
     })
   },
   ['admin-appointments'],
-  { revalidate: 30 }
+  { revalidate: 60 } // Cache for 1 minute
 )
 
 function getStatusBadge(status: string) {

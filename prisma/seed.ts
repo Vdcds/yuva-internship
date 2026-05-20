@@ -1,3 +1,6 @@
+import { config } from 'dotenv'
+config()
+
 import { PrismaClient, RequestStatus, AppointmentStatus, Priority } from '@prisma/client'
 
 const prisma = new PrismaClient()

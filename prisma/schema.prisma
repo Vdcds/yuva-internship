@@ -57,6 +57,11 @@ model ServiceRequest {
   activity     ActivityLog[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+
+  @@index([status])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([category])
 }
 
 model Appointment {
@@ -70,6 +75,10 @@ model Appointment {
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+
+  @@index([status])
+  @@index([userId])
+  @@index([date])
 }
 
 model Document {

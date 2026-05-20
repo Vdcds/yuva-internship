@@ -38,7 +38,7 @@ export function RequestsTable({ requests }: { requests: RequestData[] }) {
       {(filteredRequests) => (
         <>
           {filteredRequests.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No requests found</p>
+            <p className="text-muted-foreground text-center py-8">No requests for admin users</p>
           ) : (
             <Table>
               <TableHeader>

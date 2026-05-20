@@ -6,39 +6,53 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusFilter } from './status-filter'
 import { AdminDashboardCharts } from '@/components/admin-dashboard-charts'
 import { RequestsTable } from './requests-table'
-import { FileText, Clock } from 'lucide-react'
+import { unstable_cache } from 'next/cache'
 
-export const dynamic = 'force-dynamic'
 
-async function getAllRequests(status?: string) {
-  const where = status && status !== 'ALL' ? { status: status as any } : {}
-  return prisma.serviceRequest.findMany({
-    where,
-    include: { user: true },
-    orderBy: { createdAt: 'desc' },
-  })
-}
-
-async function getStats() {
-  const [total, pending, approved, rejected, categoryData] = await Promise.all([
-    prisma.serviceRequest.count(),
-    prisma.serviceRequest.count({ where: { status: 'PENDING' } }),
-    prisma.serviceRequest.count({ where: { status: 'APPROVED' } }),
-    prisma.serviceRequest.count({ where: { status: 'REJECTED' } }),
-    prisma.serviceRequest.groupBy({
-      by: ['category'],
-      _count: true,
-    }),
-  ])
-
-  return {
-    total,
-    pending,
-    approved,
-    rejected,
-    categoryData: categoryData.map(c => ({ name: c.category, value: c._count })),
+const getAllRequests = unstable_cache(
+  async function getAllRequests(status?: string) {
+    const where = status && status !== 'ALL' ? { status: status as any } : {}
+    return prisma.serviceRequest.findMany({
+      where,
+      include: { user: true },
+      orderBy: { createdAt: 'desc' },
+      take: 100, // Add limit to prevent loading too many records
+    })
+  },
+  ['all-requests'],
+  {
+    revalidate: 60, // Revalidate every 60 seconds
+    tags: ['all-requests'],
   }
-}
+)
+
+const getStats = unstable_cache(
+  async function getStats() {
+    const [total, pending, approved, rejected, categoryData] = await Promise.all([
+      prisma.serviceRequest.count(),
+      prisma.serviceRequest.count({ where: { status: 'PENDING' } }),
+      prisma.serviceRequest.count({ where: { status: 'APPROVED' } }),
+      prisma.serviceRequest.count({ where: { status: 'REJECTED' } }),
+      prisma.serviceRequest.groupBy({
+        by: ['category'],
+        _count: true,
+      }),
+    ])
+
+    return {
+      total,
+      pending,
+      approved,
+      rejected,
+      categoryData: categoryData.map(c => ({ name: c.category, value: c._count })),
+    }
+  },
+  ['admin-dashboard-stats'],
+  {
+    revalidate: 30, // Revalidate every 30 seconds
+    tags: ['admin-dashboard-stats'],
+  }
+)
 
 interface RequestData {
   id: string
@@ -83,7 +97,11 @@ export default async function AdminRequestsPage({ searchParams }: Props) {
             <StatusFilter currentStatus={status} />
           </CardHeader>
           <CardContent className="p-4">
-            <RequestsTable requests={requests as RequestData[]} />
+            {requests.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">No requests for admin users</p>
+            ) : (
+              <RequestsTable requests={requests as RequestData[]} />
+            )}
           </CardContent>
         </Card>
       </div>

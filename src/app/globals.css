@@ -85,11 +85,11 @@
 }
 
 @layer utilities {
-  .font-didot {
-    font-family: 'GFS Didot', serif;
+.font-didot {
+    font-family: var(--font-didot), serif;
   }
 }
 
 .font-didot {
-  font-family: 'GFS Didot', serif;
+  font-family: var(--font-didot), serif;
 }

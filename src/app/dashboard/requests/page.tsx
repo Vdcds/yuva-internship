@@ -5,15 +5,21 @@ import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { Card, CardContent } from '@/components/ui/card'
 import { CreateRequestDialog } from './create-request-dialog'
 import { RequestsList } from './requests-list'
+import { unstable_cache } from 'next/cache'
 
-export const dynamic = 'force-dynamic'
-
-async function getUserRequests(userId: string) {
-  return prisma.serviceRequest.findMany({
-    where: { userId },
-    orderBy: { createdAt: 'desc' },
-  })
-}
+const getUserRequests = unstable_cache(
+  async function getUserRequests(userId: string) {
+    return prisma.serviceRequest.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    })
+  },
+  ['user-requests'],
+  {
+    revalidate: 60, // Revalidate every 60 seconds
+    tags: ['user-requests'],
+  }
+)
 
 interface RequestData {
   id: string

@@ -20,23 +20,57 @@ interface Props {
   categoryData: CategoryData[]
 }
 
-const COLORS = ['#f59e0b', '#10b981', '#ef4444', '#3b82f6', '#8b5cf6', '#ec4899']
-
 export function AdminDashboardCharts({ stats, categoryData }: Props) {
-  const [mounted, setMounted] = useState(false)
-
+  const [isMounted, setIsMounted] = useState(false)
+  
   useEffect(() => {
-    setMounted(true)
+    setIsMounted(true)
   }, [])
 
-  if (!mounted) {
+  // If component isn't mounted yet or data is empty, show skeletons
+  if (!isMounted || (stats.total === 0 && stats.pending === 0 && stats.approved === 0 && stats.rejected === 0)) {
     return (
       <div className="grid lg:grid-cols-2 gap-4">
-        <div className="bg-card/50 rounded-xl p-4 border h-[250px] flex items-center justify-center">
-          <p className="text-muted-foreground text-sm">Loading charts...</p>
+        <div className="bg-card/50 rounded-xl p-4 border min-h-[250px] relative">
+          <h3 className="font-semibold text-sm mb-4">Request Status Distribution</h3>
+          <div className="h-[200px] w-full">
+            <div className="absolute inset-0 animate-pulse bg-card/50 rounded" style={{ minHeight: '200px' }}></div>
+          </div>
         </div>
-        <div className="bg-card/50 rounded-xl p-4 border h-[250px] flex items-center justify-center">
-          <p className="text-muted-foreground text-sm">Loading charts...</p>
+
+        <div className="bg-card/50 rounded-xl p-4 border min-h-[250px] relative">
+          <h3 className="font-semibold text-sm mb-4">Requests by Category</h3>
+          <div className="h-[200px] w-full">
+            <div className="absolute inset-0 animate-pulse bg-card/50 rounded" style={{ minHeight: '200px' }}></div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Check if we have valid data for charts
+  const hasValidData = 
+    stats.total > 0 || 
+    stats.pending > 0 || 
+    stats.approved > 0 || 
+    stats.rejected > 0 ||
+    (categoryData && categoryData.length > 0 && categoryData.some(item => item.value > 0))
+
+  if (!hasValidData) {
+    return (
+      <div className="grid lg:grid-cols-2 gap-4">
+        <div className="bg-card/50 rounded-xl p-4 border min-h-[250px] relative">
+          <h3 className="font-semibold text-sm mb-4">Request Status Distribution</h3>
+          <div className="h-[200px] w-full">
+            <div className="absolute inset-0 animate-pulse bg-card/50 rounded" style={{ minHeight: '200px' }}></div>
+          </div>
+        </div>
+
+        <div className="bg-card/50 rounded-xl p-4 border min-h-[250px] relative">
+          <h3 className="font-semibold text-sm mb-4">Requests by Category</h3>
+          <div className="h-[200px] w-full">
+            <div className="absolute inset-0 animate-pulse bg-card/50 rounded" style={{ minHeight: '200px' }}></div>
+          </div>
         </div>
       </div>
     )
@@ -91,3 +125,4 @@ export function AdminDashboardCharts({ stats, categoryData }: Props) {
     </div>
   )
 }
+

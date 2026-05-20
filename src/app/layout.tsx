@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
+import { GFS_Didot } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from '@/components/theme-provider'
 import { ToasterProvider } from '@/components/toaster'
 import { ClerkProviderWrapper } from '@/components/clerk-provider'
+
+const gfsDidot = GFS_Didot({
+  weight: "400",
+  subsets: ["greek"],
+  display: "swap",
+  variable: "--font-didot",
+});
 
 export const metadata: Metadata = {
   title: "E-Governance Portal",
@@ -16,19 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProviderWrapper>
-      <ThemeProvider>
-        <html lang="en" className="font-sans" suppressHydrationWarning>
-          <head>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-            <link href="https://fonts.googleapis.com/css2?family=GFS+Didot&display=swap" rel="stylesheet" />
-          </head>
-          <body className="min-h-screen antialiased" suppressHydrationWarning>
+      <html lang="en" className={`${gfsDidot.variable} font-sans`} suppressHydrationWarning>
+        <body className="min-h-screen antialiased" suppressHydrationWarning>
+          <ThemeProvider>
             {children}
             <ToasterProvider />
-          </body>
-        </html>
-      </ThemeProvider>
+          </ThemeProvider>
+        </body>
+      </html>
     </ClerkProviderWrapper>
   );
 }

@@ -2,21 +2,26 @@ import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
 import { CreateAppointmentDialog } from './create-appointment-dialog'
 import { Calendar } from 'lucide-react'
+import { unstable_cache } from 'next/cache'
 
-export const dynamic = 'force-dynamic'
-
-async function getUserAppointments(userId: string) {
-  return prisma.appointment.findMany({
-    where: { userId },
-    orderBy: { date: 'desc' },
-  })
-}
+const getUserAppointments = unstable_cache(
+  async function getUserAppointments(userId: string) {
+    return prisma.appointment.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+    })
+  },
+  ['user-appointments'],
+  {
+    revalidate: 60, // Revalidate every 60 seconds
+    tags: ['user-appointments'],
+  }
+)
 
 function getStatusBadge(status: string) {
   const variants: Record<string, 'default' | 'destructive' | 'secondary' | 'outline'> = {
