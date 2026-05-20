@@ -1,22 +1,32 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react'
+import { MessageCircle, X, Send, Bot, User, Loader2, CalendarCheck } from 'lucide-react'
 
 interface Message {
   role: 'user' | 'assistant'
   content: string
+  appointmentBooked?: boolean
+}
+
+interface AppointmentData {
+  id: string
+  department: string
+  date: string
+  timeSlot: string
 }
 
 const SUGGESTIONS = [
   'How do I submit a service request?',
   'What categories are available?',
-  'How to book an appointment?',
+  'Book an appointment for me',
   'Check my request status',
 ]
 
 export function ChatBot() {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Hello! I\'m the E-Governance assistant. I can help you with service requests, appointments, and navigating the portal. How can I help you today?' },
@@ -57,12 +67,23 @@ export function ChatBot() {
       if (!response.ok) throw new Error('Failed to get response')
 
       const data = await response.json()
-      setMessages([...newMessages, { role: 'assistant', content: data.message }])
+      setMessages([...newMessages, { role: 'assistant', content: data.message, appointmentBooked: data.appointmentBooked }])
+
+      if (data.appointmentBooked) {
+        router.refresh()
+      }
     } catch {
       setMessages([...newMessages, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }])
     } finally {
       setIsLoading(false)
     }
+  }
+
+  function formatMessage(content: string) {
+    return content.split('\n').map((line, i) => {
+      const formatted = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/• /g, '•&nbsp;')
+      return <p key={i} className={i > 0 ? 'mt-1' : ''} dangerouslySetInnerHTML={{ __html: formatted || '&nbsp;' }} />
+    })
   }
 
   return (
@@ -102,14 +123,22 @@ export function ChatBot() {
                     <Bot className="h-3.5 w-3.5" />
                   </div>
                 )}
-                <div
-                  className={`max-w-[260px] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
-                    msg.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
-                >
-                  {msg.content}
+                <div className={`max-w-[260px] space-y-2`}>
+                  <div
+                    className={`rounded-2xl px-3 py-2 text-sm leading-relaxed ${
+                      msg.role === 'user'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted'
+                    }`}
+                  >
+                    {formatMessage(msg.content)}
+                  </div>
+                  {msg.appointmentBooked && (
+                    <div className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400">
+                      <CalendarCheck className="h-3.5 w-3.5" />
+                      Appointment booked!
+                    </div>
+                  )}
                 </div>
                 {msg.role === 'user' && (
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted">
