@@ -73,7 +73,7 @@ export default async function AdminAppointmentsPage({ searchParams }: Props) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {appointments.map((apt) => (
+                  {appointments.map((apt: any) => (
                     <TableRow key={apt.id}>
                       <TableCell className="font-medium">
                         {apt.user?.name || apt.user?.email}
