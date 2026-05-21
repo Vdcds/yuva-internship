@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
-import { Suspense } from 'react'
+import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, Suspense } from 'react'
 import { getCurrentUser } from '@/lib/auth'
+
 import { prisma } from '@/lib/prisma'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -126,7 +127,7 @@ async function RecentRequestsList({ userId, role }: { userId: string, role: stri
           <p className="text-sm text-muted-foreground py-4 text-center">No requests yet</p>
         ) : (
           <div className="space-y-2">
-            {recentRequests.map((req) => (
+            {recentRequests.map((req: { id: Key | null | undefined; user: { name: any; email: any }; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; category: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; createdAt: Date; status: string }) => (
               <div key={req.id} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium truncate">
@@ -163,7 +164,7 @@ async function UpcomingAppointmentsList({ userId, role }: { userId: string, role
           <p className="text-sm text-muted-foreground py-4 text-center">No upcoming appointments</p>
         ) : (
           <div className="space-y-2">
-            {upcomingAppointments.map((apt) => (
+            {upcomingAppointments.map((apt: { id: Key | null | undefined; department: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; date: Date; timeSlot: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; status: string }) => (
               <div key={apt.id} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium truncate">{apt.department}</p>
@@ -189,7 +190,7 @@ export default async function DashboardPage() {
   if (!user) redirect('/sign-in')
 
   return (
-    <DashboardLayout userRole={user.role}>
+    <DashboardLayout userRole={user.role as 'ADMIN' | 'CITIZEN'}>
       <div className="space-y-5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>

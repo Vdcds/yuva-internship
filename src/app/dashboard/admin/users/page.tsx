@@ -5,6 +5,7 @@ import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { PromoteUserButton } from './promote-user-button'
 
 async function getAllUsers() {
   return prisma.user.findMany({
@@ -51,6 +52,7 @@ export default async function AdminUsersPage() {
                     <TableHead>Requests</TableHead>
                     <TableHead>Appointments</TableHead>
                     <TableHead>Joined</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -67,6 +69,13 @@ export default async function AdminUsersPage() {
                       <TableCell>{u._count.appointments}</TableCell>
                       <TableCell className="text-muted-foreground">
                         {new Date(u.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <PromoteUserButton
+                          userId={u.id}
+                          currentRole={u.role as 'ADMIN' | 'CITIZEN'}
+                          currentUserId={user.id}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}

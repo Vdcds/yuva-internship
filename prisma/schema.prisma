@@ -3,39 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  CITIZEN
-  ADMIN
-}
-
-enum RequestStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-enum Priority {
-  HIGH
-  MEDIUM
-  LOW
-}
-
-enum AppointmentStatus {
-  SCHEDULED
-  COMPLETED
-  CANCELLED
-}
-
 model User {
-  id            String    @id @default(cuid())
+  id            String
   clerkId       String    @unique
   email         String    @unique
   name          String?
-  role          Role      @default(CITIZEN)
+  role          String    @default("CITIZEN")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   requests      ServiceRequest[]
@@ -43,59 +20,50 @@ model User {
 }
 
 model ServiceRequest {
-  id            String        @id @default(cuid())
+  id            String    @id @default(cuid())
   title         String
-  description  String
+  description   String
   category      String
-  status        RequestStatus @default(PENDING)
-  priority     Priority      @default(MEDIUM)
-  remarks      String?
-  assignedTo   String?       // Assigned officer name
-  userId       String
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  documents    Document[]
-  activity     ActivityLog[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-
-  @@index([status])
-  @@index([userId])
-  @@index([createdAt])
-  @@index([category])
+  status        String    @default("PENDING")
+  priority      String    @default("MEDIUM")
+  remarks       String?
+  assignedTo    String?
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents     Document[]
+  activity      ActivityLog[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Appointment {
-  id          String            @id @default(cuid())
+  id          String    @id @default(cuid())
   department  String
   date        DateTime
   timeSlot    String
-  status      AppointmentStatus @default(SCHEDULED)
+  status      String    @default("SCHEDULED")
   notes       String?
   userId      String
-  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-
-  @@index([status])
-  @@index([userId])
-  @@index([date])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Document {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   fileName      String
   fileUrl       String
   fileType      String?
   requestId     String
   request       ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-  uploadedAt    DateTime        @default(now())
+  uploadedAt    DateTime  @default(now())
 }
 
 model ActivityLog {
-  id          String          @id @default(cuid())
-  action      String          // e.g., "created", "status_updated", "appointment_scheduled"
-  details     String?         // Additional details about the action
+  id          String    @id @default(cuid())
+  action      String
+  details     String?
   requestId   String
   request     ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-  createdAt   DateTime        @default(now())
+  createdAt   DateTime  @default(now())
 }

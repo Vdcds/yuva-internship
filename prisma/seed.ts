@@ -1,11 +1,9 @@
 import { config } from 'dotenv'
+import { PrismaClient } from "@prisma/client";
 config()
-
-import { PrismaClient, RequestStatus, AppointmentStatus, Priority } from '@prisma/client'
-
 const prisma = new PrismaClient()
 
-const categoryPriority: Record<string, Priority> = {
+const categoryPriority: Record<string, string> = {
   'Transport': 'HIGH',
   'Legal': 'HIGH',
   'Tax': 'MEDIUM',
@@ -26,7 +24,7 @@ const officers = [
   'Vijay Malhotra',
 ]
 
-function getPriority(category: string): Priority {
+function getPriority(category: string): string {
   return categoryPriority[category] || 'MEDIUM'
 }
 
@@ -86,7 +84,7 @@ async function main() {
       title: 'Driving License Application',
       description: 'Apply for new driving license - Category DL',
       category: 'Transport',
-      status: RequestStatus.PENDING,
+      status: 'PENDING',
       userId: citizen1.id,
       createdAt: new Date('2025-04-25'),
     },
@@ -94,7 +92,7 @@ async function main() {
       title: 'Water Supply Connection Request',
       description: 'New water connection for residential property at Sector 15',
       category: 'Utilities',
-      status: RequestStatus.APPROVED,
+      status: 'APPROVED',
       remarks: 'Connection approved, installation scheduled',
       userId: citizen1.id,
       createdAt: new Date('2025-04-20'),
@@ -103,7 +101,7 @@ async function main() {
       title: 'Property Tax Payment FY 2025-26',
       description: 'Annual property tax payment for house #42, Green Avenue',
       category: 'Tax',
-      status: RequestStatus.PENDING,
+      status: 'PENDING',
       userId: citizen2.id,
       createdAt: new Date('2025-04-26'),
     },
@@ -111,7 +109,7 @@ async function main() {
       title: 'Marriage Certificate Application',
       description: 'Application for registered marriage certificate',
       category: 'Legal',
-      status: RequestStatus.APPROVED,
+      status: 'APPROVED',
       remarks: 'Certificate ready for pickup',
       userId: citizen2.id,
       createdAt: new Date('2025-04-15'),
@@ -120,7 +118,7 @@ async function main() {
       title: 'Vehicle Registration Renewal',
       description: 'Renew registration for Honda City (TN-01-AB-1234)',
       category: 'Transport',
-      status: RequestStatus.REJECTED,
+      status: 'REJECTED',
       remarks: 'Insurance documents required',
       userId: citizen3.id,
       createdAt: new Date('2025-04-18'),
@@ -129,7 +127,7 @@ async function main() {
       title: 'Electricity Bill Complaint',
       description: 'High billing discrepancy for March 2025',
       category: 'Utilities',
-      status: RequestStatus.PENDING,
+      status: 'PENDING',
       userId: citizen3.id,
       createdAt: new Date('2025-04-27'),
     },
@@ -137,7 +135,7 @@ async function main() {
       title: 'Building Plan Approval',
       description: 'Apply for building construction approval for commercial plot',
       category: 'Legal',
-      status: RequestStatus.APPROVED,
+      status: 'APPROVED',
       remarks: 'Plan approved with conditions',
       userId: citizen1.id,
       createdAt: new Date('2025-04-10'),
@@ -146,7 +144,7 @@ async function main() {
       title: 'Trade License Registration',
       description: 'New trade license for grocery store',
       category: 'Business',
-      status: RequestStatus.PENDING,
+      status: 'PENDING',
       userId: citizen2.id,
       createdAt: new Date('2025-04-24'),
     },
@@ -154,7 +152,7 @@ async function main() {
       title: 'Passport Application Status',
       description: 'Check status of passport application submitted in Feb 2025',
       category: 'Documents',
-      status: RequestStatus.APPROVED,
+      status: 'APPROVED',
       remarks: 'Passport dispatched',
       userId: citizen1.id,
       createdAt: new Date('2025-04-05'),
@@ -163,7 +161,7 @@ async function main() {
       title: 'Income Certificate Request',
       description: 'Apply for income certificate for scholarship application',
       category: 'Documents',
-      status: RequestStatus.PENDING,
+      status: 'PENDING',
       userId: citizen3.id,
       createdAt: new Date('2025-04-28'),
     },
@@ -188,7 +186,7 @@ async function main() {
     })
 
     // Add activity for status changes (if not pending)
-    if (req.status === RequestStatus.APPROVED) {
+    if (req.status === 'APPROVED') {
       await prisma.activityLog.create({
         data: {
           action: 'status_updated',
@@ -196,7 +194,7 @@ async function main() {
           requestId: created.id,
         },
       })
-    } else if (req.status === RequestStatus.REJECTED) {
+    } else if (req.status === 'REJECTED') {
       await prisma.activityLog.create({
         data: {
           action: 'status_updated',
@@ -214,7 +212,7 @@ async function main() {
         department: 'Transport Office',
         date: new Date('2025-05-02'),
         timeSlot: '10:00 AM',
-        status: AppointmentStatus.SCHEDULED,
+        status: 'SCHEDULED',
         notes: 'Bring original ID proofs',
         userId: citizen1.id,
       },
@@ -222,7 +220,7 @@ async function main() {
         department: 'Revenue Office',
         date: new Date('2025-05-05'),
         timeSlot: '02:00 PM',
-        status: AppointmentStatus.SCHEDULED,
+        status: 'SCHEDULED',
         notes: 'Property tax payment confirmation',
         userId: citizen2.id,
       },
@@ -230,7 +228,7 @@ async function main() {
         department: 'Municipal Corporation',
         date: new Date('2025-05-08'),
         timeSlot: '11:00 AM',
-        status: AppointmentStatus.SCHEDULED,
+        status: 'SCHEDULED',
         notes: 'Building plan review meeting',
         userId: citizen1.id,
       },
@@ -238,7 +236,7 @@ async function main() {
         department: 'Electricity Board',
         date: new Date('2025-04-30'),
         timeSlot: '09:00 AM',
-        status: AppointmentStatus.COMPLETED,
+        status: 'COMPLETED',
         notes: 'Meter reading verification',
         userId: citizen3.id,
       },
@@ -246,7 +244,7 @@ async function main() {
         department: 'Legal Services',
         date: new Date('2025-05-12'),
         timeSlot: '03:00 PM',
-        status: AppointmentStatus.SCHEDULED,
+        status: 'SCHEDULED',
         notes: 'Marriage certificate pickup',
         userId: citizen2.id,
       },

@@ -45,6 +45,5 @@ const appointment = await prisma.appointment.create({
   revalidatePath('/dashboard')
   revalidatePath('/dashboard/appointments')
   revalidatePath('/dashboard/admin/appointments')
-
   return NextResponse.json(appointment)
 }
