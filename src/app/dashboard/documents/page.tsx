@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DocumentsTable } from '@/components/documents-table'
+import { UploadDialog } from '@/components/upload-dialog'
 
 async function getUserDocuments(userId: string) {
   return prisma.document.findMany({
@@ -13,18 +14,32 @@ async function getUserDocuments(userId: string) {
   })
 }
 
+async function getUserRequests(userId: string) {
+  return prisma.serviceRequest.findMany({
+    where: { userId },
+    select: { id: true, title: true },
+    orderBy: { createdAt: 'desc' },
+  })
+}
+
 export default async function DocumentsPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/sign-in')
 
-  const documents = await getUserDocuments(user.id)
+  const [documents, requests] = await Promise.all([
+    getUserDocuments(user.id),
+    getUserRequests(user.id),
+  ])
 
   return (
     <DashboardLayout userRole={user.role}>
       <div className="space-y-5">
-        <div>
-          <h2 className="font-didot text-xl font-bold">My Documents</h2>
-          <p className="text-sm text-muted-foreground">View and download your uploaded documents</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-didot text-xl font-bold">My Documents</h2>
+            <p className="text-sm text-muted-foreground">Upload and manage documents for your service requests</p>
+          </div>
+          {requests.length > 0 && <UploadDialog requestOptions={requests} />}
         </div>
 
         <Card className="bg-card/80">
@@ -36,7 +51,7 @@ export default async function DocumentsPage() {
               <div className="text-center py-12">
                 <p className="text-muted-foreground">No documents uploaded yet</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Documents are attached to service requests
+                  Select a service request above to upload documents
                 </p>
               </div>
             ) : (

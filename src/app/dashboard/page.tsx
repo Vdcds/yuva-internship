@@ -48,7 +48,7 @@ const getRecentRequests = unstable_cache(
 const getUpcomingAppointments = unstable_cache(
   async function getUpcomingAppointments(userId: string, role: string) {
     const now = new Date()
-    const where = role === 'ADMIN' 
+    const where = role === 'ADMIN'
       ? { date: { gte: now }, status: 'SCHEDULED' as const }
       : { userId, date: { gte: now }, status: 'SCHEDULED' as const }
     return prisma.appointment.findMany({

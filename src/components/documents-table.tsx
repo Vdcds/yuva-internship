@@ -4,7 +4,6 @@ import { Document } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { FileText, Download, File, FileIcon } from 'lucide-react'
-import { toast } from 'sonner'
 
 interface DocumentsTableProps {
   documents: (Document & { request: { title: string } })[]
@@ -51,26 +50,22 @@ export function DocumentsTable({ documents }: DocumentsTableProps) {
             </TableCell>
             <TableCell>
               <span className="text-xs bg-muted px-2 py-1 rounded">
-                {doc.fileType || 'N/A'}
+                {doc.fileType?.split('/').pop()?.toUpperCase() || 'N/A'}
               </span>
             </TableCell>
             <TableCell className="text-sm text-muted-foreground">
               {formatDate(doc.uploadedAt)}
             </TableCell>
             <TableCell>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-8 gap-1"
-                onClick={() => {
-                  toast.success('Download started', {
-                    description: doc.fileName,
-                  })
-                }}
+              <a
+                href={doc.fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 h-8 px-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Download className="h-3.5 w-3.5" />
-                <span className="text-xs">Download</span>
-              </Button>
+                View
+              </a>
             </TableCell>
           </TableRow>
         ))}
