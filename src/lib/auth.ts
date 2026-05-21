@@ -33,13 +33,14 @@ export async function getCurrentUser() {
       const name = clerkUser?.firstName
         ? `${clerkUser.firstName}${clerkUser.lastName ? ' ' + clerkUser.lastName : ''}`
         : null
+      const isAdmin = email.includes('admin')
 
       user = await prisma.user.create({
         data: {
           clerkId: userId,
           email,
           name,
-          role: 'CITIZEN',
+          role: isAdmin ? 'ADMIN' : 'CITIZEN',
         },
       })
     }

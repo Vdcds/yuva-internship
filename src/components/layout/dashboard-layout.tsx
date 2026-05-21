@@ -31,6 +31,7 @@ const adminLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/admin/requests', label: 'All Requests', icon: FileText },
   { href: '/dashboard/admin/appointments', label: 'Appointments', icon: Calendar },
+  { href: '/dashboard/admin/documents', label: 'Documents', icon: File },
   { href: '/dashboard/admin/users', label: 'Citizens', icon: Users },
 ]
 
